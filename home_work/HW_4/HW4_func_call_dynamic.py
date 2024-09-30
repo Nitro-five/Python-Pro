@@ -1,12 +1,14 @@
-'''
+"""
 Функция call_function принимает объект,
 название метода в виде строки
 и произвольные аргументы для этого метода.
-'''
+"""
+
 def call_function(obj, method_name, *args):
     method = getattr(obj, method_name)
 
     return method(*args)
+
 
 # Пример использование
 class Calculator:
