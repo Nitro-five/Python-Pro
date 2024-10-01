@@ -8,11 +8,13 @@
 Методы:
     __getattr__(name): Переадресует вызовы методов объекта и логирует их.
 """
+
+
 class Proxy:
     def __init__(self, obj):
         self._obj = obj
 
-    #Инициализирует прокси с заданным объектом.
+    # Инициализирует прокси с заданным объектом.
     def __getattr__(self, name):
         # Переадресация вызовов методов
         attr = getattr(self._obj, name)
@@ -21,6 +23,7 @@ class Proxy:
                 # Логирование вызова
                 print(f"Calling method: {name} with args: {args}")
                 return attr(*args, **kwargs)
+
             return wrapper
         return attr
 
@@ -29,6 +32,7 @@ class Proxy:
 class MyClass:
     def greet(self, name):
         return f"Hello, {name}!"
+
 
 obj = MyClass()
 proxy = Proxy(obj)

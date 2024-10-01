@@ -6,6 +6,8 @@
        add_attribute(name, value): Добавляет атрибут с заданным именем и значением.
        remove_attribute(name): Удаляет атрибут с заданным именем, если он существует.
    """
+
+
 class MutableClass:
     def add_attribute(self, name, value):
         setattr(self, name, value)
@@ -16,6 +18,7 @@ class MutableClass:
         else:
             raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
+
 # Пример использования
 obj = MutableClass()
 
@@ -24,4 +27,3 @@ print(obj.name)  # Python
 
 obj.remove_attribute("name")
 # print(obj.name)  # Виникне помилка, атрибут видалений
-

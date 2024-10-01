@@ -4,6 +4,7 @@
 и произвольные аргументы для этого метода.
 """
 
+
 def call_function(obj, method_name, *args):
     method = getattr(obj, method_name)
 

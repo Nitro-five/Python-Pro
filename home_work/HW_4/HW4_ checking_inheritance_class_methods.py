@@ -1,6 +1,5 @@
 import inspect
 
-
 """
 Анализирует наследование класса и выводит все методы,
 которые он наследует от базовых классов.
@@ -8,6 +7,8 @@ import inspect
 Параметры:
     cls (type): Класс для анализа.
 """
+
+
 def analyze_inheritance(cls):
     # Получаем все базовые классы
     base_classes = cls.__bases__
@@ -27,6 +28,7 @@ def analyze_inheritance(cls):
             print(f"- {method}")
     else:
         print("<нет унаследованных методов>")
+
 
 # Пример использования
 class Parent:
