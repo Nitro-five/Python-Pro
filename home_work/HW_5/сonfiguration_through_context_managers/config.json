@@ -1,0 +1,20 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 5432,
+        "username": "user",
+        "password": "password"
+    },
+    "logging": {
+        "level": "INFO",
+        "file": "app.log"
+    },
+    "features": {
+        "enable_feature_x": true,
+        "enable_feature_y": false
+    },
+    "port": "Port",
+    "5432": "2213",
+    "Port": "port",
+    "2213": "1111"
+}
