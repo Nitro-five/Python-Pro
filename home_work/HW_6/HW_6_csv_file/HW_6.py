@@ -1,88 +1,88 @@
-import csv
+import json
 
 
-def read_students(filename: str) -> list:
+def load_books(filename):
     """
-    Читает данные студентов из CSV-файла и возвращает список студентов.
+    Читает книги из JSON-файла и возвращает список книг.
 
     Параметры:
     filename : str
-        Имя CSV-файла для чтения.
+        Имя JSON-файла для чтения.
 
     Возвращает:
     list
-        Список студентов, где каждый студент представлен как словарь с ключами
-        'Ім'я', 'Вік' и 'Оцінка'.
+        Список книг, где каждая книга представлена как словарь с ключами
+        'назва', 'автор', 'рік' и 'наявність'.
     """
-    students = []
-    with open(filename, mode='r', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            students.append(row)
-    return students
+    try:
+        with open(filename, 'r', encoding='utf-8') as file:
+            # Загружаем и возвращаем список книг
+            return json.load(file)
+    except FileNotFoundError:
+        return []
 
 
-def calculate_average_grade(students: list) -> float:
+def print_available_books(books):
     """
-    Вычисляет среднюю оценку студентов.
+    Выводит на экран список доступных книг.
 
     Параметры:
-    students : list
-        Список студентов, где каждый студент представлен как словарь с ключом
-        'Оцінка'.
-
-    Возвращает:
-    float
-        Средняя оценка студентов. Если список пуст, возвращает 0.
-    """
-    total_grade = 0
-    for student in students:
-        total_grade += int(student['Оцінка'])
-    return total_grade / len(students) if students else 0
-
-
-def add_student(filename: str, name: str, age: str, grade: str) -> None:
-    """
-    Добавляет нового студента в CSV-файл.
-
-    Параметры:
-    filename : str
-        Имя CSV-файла, в который будет добавлен новый студент.
-    name : str
-        Имя нового студента.
-    age : str
-        Возраст нового студента.
-    grade : str
-        Оценка нового студента.
+    books : list
+        Список книг, представленный в виде словарей.
 
     Возвращает:
     None
     """
-    with open(filename, mode='a', encoding='utf-8', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([name, age, grade])
+    available_books = [book for book in books if book['наявність']]
+
+    message = "Доступні книги:" if available_books else "Немає доступних книг."
+    print(message)
+
+    for book in available_books:
+        print(f"Назва: {book['назва']}, Автор: {book['автор']}, Рік: {book['рік']}")
+
+
+def add_book(filename, new_book):
+    """
+    Добавляет новую книгу в JSON-файл.
+
+    Параметры:
+    filename : str
+        Имя JSON-файла для добавления книги.
+    new_book : dict
+        Словарь с информацией о новой книге, содержащий ключи
+        'назва', 'автор', 'рік' и 'наявність'.
+
+    Возвращает:
+    None
+    """
+    # Загружаем существующие книги
+    books = load_books(filename)
+    books.append(new_book)
+    # Сохраняем обновлённый список книг
+    with open(filename, 'w', encoding='utf-8') as file:
+        json.dump(books, file, ensure_ascii=False, indent=4)
+
+
+def main():
+    # Имя файла для хранения книг
+    filename = 'books.json'
+
+    # Загружаем книги
+    books = load_books(filename)
+    # Выводим доступные книги
+    print_available_books(books)
+
+    new_book = {
+        "назва": "Книга 3",
+        "автор": "Автор 3",
+        "рік": 2021,
+        "наявність": True
+    }
+
+    add_book(filename, new_book)
+    print("Нова книга додана.")
 
 
 if __name__ == "__main__":
-    """
-    Основной блок программы, который выполняется при запуске скрипта.
-
-    Читает данные студентов из CSV-файла, вычисляет и выводит среднюю оценку,
-    а также позволяет пользователю ввести данные нового студента и добавляет их в файл.
-    """
-    filename = 'students.csv'
-
-    # Чтение данных из CSV-файла
-    students = read_students(filename)
-
-    # Вывод средней оценки
-    average_grade = calculate_average_grade(students)
-    print(f"Средняя оценка студентов: {average_grade:.2f}")
-
-    # Добавление нового студента
-    new_name = input("Введите имя нового студента: ")
-    new_age = input("Введите возраст нового студента: ")
-    new_grade = input("Введите оценку нового студента: ")
-
-    add_student(filename, new_name, new_age, new_grade)
-    print(f"Студент '{new_name}' добавлен в файлу.")
+    main()
