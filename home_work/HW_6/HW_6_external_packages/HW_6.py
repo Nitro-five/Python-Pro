@@ -23,9 +23,9 @@ def download_page(url: str, filename: str) -> None:
         Для других непредвиденных ошибок.
     """
     try:
-        #GET-запрос к URL
+        # GET-запрос к URL
         response = requests.get(url)
-        #Успешен ли запрос (код 200)
+        # Успешен ли запрос (код 200)
         response.raise_for_status()
 
         with open(filename, 'w', encoding='utf-8') as file:

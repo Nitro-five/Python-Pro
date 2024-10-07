@@ -35,7 +35,7 @@ def print_available_books(books):
     """
     available_books = [book for book in books if book['наявність']]
 
-    message = "Доступні книги:" if available_books else "Немає доступних книг."
+    message = "Книги в наличие :" if available_books else "Нет в наличии книг."
     print(message)
 
     for book in available_books:
