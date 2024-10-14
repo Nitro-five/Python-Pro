@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 
 # Создаём таблицы, если их нет
@@ -82,24 +83,68 @@ def add_actor():
 
 # Добавляем актёров в фильм
 def add_actor_in_movies():
-    movie_id = input("Введите id фильма: ")
-    actor_id = input("Введите id актёра: ")
+    try:
+        movie_id = int(input("Введите ID фильма: "))
+        actor_id = int(input("Введите ID актёра: "))
+
+        with connect_to_db() as con:
+            cursor = con.cursor()
+
+            # Проверяем, существует ли фильм
+            cursor.execute("SELECT * FROM movies WHERE id = ?", (movie_id,))
+            if not cursor.fetchone():
+                print("Ошибка: фильм с таким ID не найден.")
+                return
+
+            # Проверяем, существует ли актёр
+            cursor.execute("SELECT * FROM actors WHERE id = ?", (actor_id,))
+            if not cursor.fetchone():
+                print("Ошибка: актёр с таким ID не найден.")
+                return
+
+            # Добавляем связь в таблицу movies_cast
+            cursor.execute("INSERT INTO movies_cast (movie_id, actor_id) VALUES (?, ?)",
+                           (movie_id, actor_id))
+            con.commit()
+
+            print("Актёр успешно добавлен в фильм.")
+    except ValueError:
+        print("Ошибка: введите корректный номер ID.")
+    except sqlite3.IntegrityError:
+        print("Ошибка: актёр уже связан с этим фильмом.")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
+#функцию для получения уникальных жанров
+def get_unique_genres():
+    with connect_to_db() as con:
+        cursor = con.cursor()
+        cursor.execute('SELECT DISTINCT genre FROM movies')
+        return [row[0] for row in cursor.fetchall()]
+
+# Функция для подсчёта среднего года рождения актёров в фильмах
+def average_age_of_actors():
+    current_year = datetime.now().year  # Получаем текущий год
 
     with connect_to_db() as con:
         cursor = con.cursor()
-        cursor.execute("INSERT INTO movie_cast (movie_id, actor_id) VALUES (?, ?)",
-                       (movie_id, actor_id))
-        con.commit()
+        cursor.execute('''
+            SELECT birth_year 
+            FROM actors
+        ''')
 
-        # Проверим, что запись добавилась в таблицу
-        cursor.execute("SELECT * FROM movie_cast WHERE movie_id = ? AND actor_id = ?", (movie_id, actor_id))
-        result = cursor.fetchall()
-        if result:
-            print("Актёр успешно добавлен в фильм.")
-        else:
-            print("Ошибка: актёр не был добавлен.")
+        birth_years = cursor.fetchall()  # Получаем все годы рождения актёров
 
+    if not birth_years:
+        print("Нет данных для расчёта.")
+        return
 
+    # Вычисляем возраста актёров
+    ages = [current_year - birth_year[0] for birth_year in birth_years]
+
+    # Считаем средний возраст
+    average_age = sum(ages) / len(ages)
+
+    print(f'Средний возраст актёров: {average_age:.2f} лет')
 
 # Показываем все фильмы с актёрами
 def view_movies_actor():
@@ -120,7 +165,6 @@ def view_movies_actor():
             print(f"Фильмы: {movie[0]}, актёры: {movie[1]}")
     else:
         print("Нет данных для отображения.")
-
 
 
 # Функция показывает жанры
@@ -216,6 +260,28 @@ def search_movie_by_title():
             print("Фильмы с таким названием не найдены.")
 
 
+# функции для отображения актёров
+def view_all_actors():
+    with connect_to_db() as con:
+        cursor = con.cursor()
+        cursor.execute("SELECT id, first_name, last_name FROM actors")
+        rows = cursor.fetchall()
+        print("Актёры в базе данных:")
+        for row in rows:
+            print(f"ID: {row[0]}, Имя: {row[1]}, Фамилия: {row[2]}")
+
+
+# Функции для отображения фильмов
+def view_all_movies():
+    with connect_to_db() as con:
+        cursor = con.cursor()
+        cursor.execute("SELECT id, title FROM movies")
+        rows = cursor.fetchall()
+        print("Фильмы в базе данных:")
+        for row in rows:
+            print(f"ID: {row[0]}, Название: {row[1]}")
+
+
 # Реализация меню
 def main_menu():
     create_tables()
@@ -229,6 +295,7 @@ def main_menu():
         print("7. Пошук фільму за назвою")
         print("8. Показати фільми (з пагінацією)")
         print("9. Показати імена всіх акторів та назви всіх фільмів")
+        print("10.Зв'язати акторів і фільм ")
         print("0. Вихід")
 
         choice = input("Виберіть дію: ")
@@ -244,13 +311,15 @@ def main_menu():
         elif choice == "5":
             show_movie_count_by_genre()
         elif choice == "6":
-            print("Ця функція ще не реалізована.")
+            average_age_of_actors()
         elif choice == "7":
             search_movie_by_title()
         elif choice == "8":
             show_movies_with_page()
         elif choice == "9":
             show_actors_and_movies()
+        elif choice == "10":
+            view_all_actors(), view_all_movies(), add_actor_in_movies()
         elif choice == "0":
             break
         else:
@@ -258,4 +327,6 @@ def main_menu():
 
 
 if __name__ == "__main__":
+    view_unique_genres()
     main_menu()
+
