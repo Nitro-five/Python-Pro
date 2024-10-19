@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta
 
 # Подключение к MongoDB
-client = MongoClient('mongodb://localhost:27018/')
+client = MongoClient('mongodb://localhost:27017/')
 db = client['online_store']
 
 # Создание коллекций
