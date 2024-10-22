@@ -48,7 +48,7 @@ if __name__ == "__main__":
     sys.set_int_max_str_digits(0)
 
     # Задаем число, для которого нужно вычислить факториал
-    n = 100000
+    n = 1000000
     # Получаем количество доступных процессоров
     num_processes = multiprocessing.cpu_count()
 
