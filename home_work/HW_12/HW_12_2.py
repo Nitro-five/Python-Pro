@@ -1,5 +1,6 @@
 import re
 
+
 def search_phone(phone):
     """
     Ищет телефонные номера в различных форматах в заданной строке.
@@ -12,6 +13,7 @@ def search_phone(phone):
     """
     template = r'(?:\(\d{3}\)\s*|\d{3}[-.])?\d{3}[-.]\d{4}|\d{10}'
     return re.findall(template, phone)
+
 
 phone = (
     "Lorem Ipsum is simply dummy text of the printing and typesetting industry.(123) 456-7890 Lorem Ipsum has "
