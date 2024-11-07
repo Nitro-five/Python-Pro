@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Наш товар{% endblock %}
+
+{% block content %}
+<h2>Категорії {{ services|length }}</h2>
+<ul>
+    {% for service in services %}
+        <li>{{ service }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

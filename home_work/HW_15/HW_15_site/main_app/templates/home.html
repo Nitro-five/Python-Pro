@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+
+
+{% extends 'base.html' %}
+
+{% block title %}Main page{% endblock %}
+
+{% block content %}
+<h2>{{ message_home }}</h2>
+<p>Це головна сторінка нашого сайту. Тому, будь ласка, ознайомтеся з нашими послугами та іншою інформацією на сайті.</p>
+{% endblock %}

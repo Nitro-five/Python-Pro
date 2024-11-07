@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block content %}
+<h2>Наші контакти</h2>
+<p>Email: {{ email }}</p>
+<p>Телефон: {{ phone }}</p>
+<p>Адреса: {{ address }}</p>
+
+<p>Останнє оновлення: {{ updated_at|date:"d M Y H:i:s" }}</p>
+{% endblock %}
