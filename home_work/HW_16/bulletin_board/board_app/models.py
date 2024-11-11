@@ -12,10 +12,10 @@ class UserProfile(models.Model):
         phone_number (CharField): Номер телефона пользователя (необязательное поле).
         address (TextField): Адрес пользователя (необязательное поле).
     """
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Связь с пользователем
-    phone_number = models.CharField(max_length=15, blank=True, null=True)  # Телефон
-    address = models.TextField(blank=True, null=True)  # Адрес
+    # Связь с пользователем
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
 
     def __str__(self):
         """
@@ -35,9 +35,10 @@ class Category(models.Model):
         name (CharField): Уникальное название категории.
         description (TextField): Описание категории.
     """
-
-    name = models.CharField(max_length=100, unique=True)  # Уникальное название категории
-    description = models.TextField()  # Описание категории
+    # Уникальное название категории
+    name = models.CharField(max_length=100, unique=True)
+    # Описание категории
+    description = models.TextField()
 
     def __str__(self):
         """
@@ -64,14 +65,14 @@ class Ad(models.Model):
         category (ForeignKey): Связь с категорией, к которой относится объявление.
     """
 
-    title = models.CharField(max_length=200)  # Заголовок объявления
-    description = models.TextField()  # Описание объявления
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # Цена (с двумя знаками после запятой)
-    created_at = models.DateTimeField(auto_now_add=True)  # Дата и время создания
-    updated_at = models.DateTimeField(auto_now=True)  # Дата и время последнего обновления
-    is_active = models.BooleanField(default=True)  # Активность объявления
-    user = models.ForeignKey(User, related_name='ads', on_delete=models.CASCADE)  # Связь с пользователем
-    category = models.ForeignKey(Category, related_name='ads', on_delete=models.CASCADE)  # Связь с категорией
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    user = models.ForeignKey(User, related_name='ads', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='ads', on_delete=models.CASCADE)
 
     def clean(self):
         """
@@ -124,11 +125,14 @@ class Comment(models.Model):
         ad (ForeignKey): Связь с объявлением, к которому был оставлен комментарий.
         user (ForeignKey): Связь с пользователем, который оставил комментарий.
     """
-
-    content = models.TextField()  # Текст комментария
-    created_at = models.DateTimeField(auto_now_add=True)  # Дата и время создания
-    ad = models.ForeignKey(Ad, related_name='comments', on_delete=models.CASCADE)  # Связь с объявлением
-    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)  # Связь с пользователем
+    # Текст комментария
+    content = models.TextField()
+    # Дата и время создания
+    created_at = models.DateTimeField(auto_now_add=True)
+    # Связь с объявлением
+    ad = models.ForeignKey(Ad, related_name='comments', on_delete=models.CASCADE)
+    # Связь с пользователем
+    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
 
     def __str__(self):
         """
