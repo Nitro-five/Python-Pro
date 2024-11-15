@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Ваш профиль</h2>
+
+    <div class="row">
+        <!-- Левая часть: Аватар -->
+        <div class="col-md-4 text-center">
+            {% if user.userprofile.avatar %}
+            <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="img-fluid rounded-circle" width="150">
+            {% else %}
+            <p class="text-muted">Аватар не установлен</p>
+            {% endif %}
+        </div>
+
+        <!-- Правая часть: Информация о пользователе -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Информация о пользователе</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Имя пользователя:</strong> {{ user.username }}</li>
+                        <li><strong>Биография:</strong> {{ user.userprofile.bio|default:"Не указана" }}</li>
+                        <li><strong>Дата рождения:</strong> {{ user.userprofile.birth_date|date:"d.m.Y" }}</li>
+                        <li><strong>Город проживания:</strong> {{ user.userprofile.location|default:"Не указан" }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка редактирования профиля -->
+    <div class="mt-4">
+        <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-lg">Редактировать профиль</a>
+    </div>
+</div>
+{% endblock %}

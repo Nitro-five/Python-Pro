@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="mb-4">Изменения профиля</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
+      {% csrf_token %}
+
+      <!-- Поле биографии -->
+      <div class="form-group mb-3">
+        <label for="{{ form.bio.id_for_label }}">Биография:</label>
+        {{ form.bio|add_class:"form-control" }}  <!-- Добавляем класс через фильтр -->
+        {% if form.bio.errors %}
+          <div class="invalid-feedback d-block">
+            {% for error in form.bio.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Поле даты рождения -->
+      <div class="form-group mb-3">
+        <label for="{{ form.birth_date.id_for_label }}">Дата рождения:</label>
+        {{ form.birth_date|add_class:"form-control" }}  <!-- Добавляем класс через фильтр -->
+        {% if form.birth_date.errors %}
+          <div class="invalid-feedback d-block">
+            {% for error in form.birth_date.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Поле для города проживания -->
+      <div class="form-group mb-3">
+        <label for="{{ form.location.id_for_label }}">Город проживания:</label>
+        {{ form.location|add_class:"form-control" }}  <!-- Добавляем класс через фильтр -->
+        {% if form.location.errors %}
+          <div class="invalid-feedback d-block">
+            {% for error in form.location.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Поле для аватара -->
+      <div class="form-group mb-3">
+        <label for="{{ form.avatar.id_for_label }}">Аватар:</label>
+        {{ form.avatar|add_class:"form-control-file" }}  <!-- Класс для файлового поля -->
+        {% if form.avatar.errors %}
+          <div class="invalid-feedback d-block">
+            {% for error in form.avatar.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Кнопка отправки -->
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Сохранить изменения</button>
+    </form>
+  </div>
+{% endblock %}
