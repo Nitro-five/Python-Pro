@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    {% if user.is_authenticated %}
+    <h2>Добро пожаловать, {{ user.username }}!</h2>
+    <p>Вы успешно вошли в систему.</p>
+    <a href="{% url 'logout' %}" class="btn btn-danger">Выйти</a>
+    {% else %}
+    <h2>Вы не авторизованы.</h2>
+    <a href="{% url 'login' %}" class="btn btn-primary">Войти</a>
+    {% endif %}
+
+    {% if messages %}
+    <div class="alert alert-info mt-3">
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
