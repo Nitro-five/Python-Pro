@@ -1,0 +1,21 @@
+<!-- templates/registration/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+</head>
+<body>
+    <h1>Зарегистрироваться</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Форматируем форму как параграфы -->
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <br>
+    <a href="{% url 'login' %}">Уже есть аккаунт? Войти</a>
+</body>
+</html>

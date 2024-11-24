@@ -1,0 +1,36 @@
+<!-- templates/tasks/create_task.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать задачу</title>
+</head>
+<body>
+    <h1>Создание задачи</h1>
+
+    <!-- Проверка на ошибки формы -->
+    {% if form.errors %}
+        <div style="color: red;">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <!-- Форма для создания задачи -->
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }} <!-- Форматируем форму как параграфы -->
+
+        <button type="submit">Создать задачу</button>
+    </form>
+
+    <br>
+    <a href="{% url 'task_list' %}">Вернуться к списку задач</a>
+</body>
+</html>
