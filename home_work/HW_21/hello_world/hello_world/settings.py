@@ -22,9 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*8^n7b43(3izop%*-^yg(_b-ciy#onp@&0+gwwo75x%(2hqpi-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://maksym.pythonanywhere.com/', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -95,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-ALLOWED_HOSTS = ['https://maksym.pythonanywhere.com/', '127.0.0.1', 'localhost']
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
