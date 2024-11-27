@@ -1,16 +1,14 @@
-"""
-WSGI config for hello_world project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
-"""
-
 import os
+import sys
 
-from django.core.wsgi import get_wsgi_application
+# Укажи путь к каталогу, где находятся твои файлы проекта
+path = '/home/Maksym/mysite'  # Путь к папке с проектом (проверь, что путь правильный)
+if path not in sys.path:
+    sys.path.append(path)
 
+# Указываем настройки Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hello_world.settings')
 
+# Импортируем WSGI приложение Django
+from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
