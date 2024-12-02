@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Import Books{% endblock %}
+
+{% block content %}
+<h1>Import Books from CSV</h1>
+
+{% if task_id %}
+    <p>Import started! Task ID: {{ task_id }}</p>
+    <p>You can track the status of the task using Celery's result backend.</p>
+{% else %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="csv_file">Choose CSV File:</label>
+        <input type="file" name="csv_file" required>
+        <button type="submit">Upload</button>
+    </form>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+<h1>{{ book.title }}</h1>
+<p>{{ book.summary }}</p>
+
+<h2>Reviews</h2>
+<ul>
+    {% for review in book.reviews.all %}
+    <li>
+        <strong>{{ review.user.username }}</strong>: {{ review.rating }} stars
+        <p>{{ review.comment }}</p>
+    </li>
+    {% empty %}
+    <p>No reviews yet.</p>
+    {% endfor %}
+</ul>
+
+<h2>Add a Review</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>

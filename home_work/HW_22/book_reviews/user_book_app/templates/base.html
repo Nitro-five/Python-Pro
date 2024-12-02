@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Book Review Site{% endblock %}</title>
+</head>
+<body>
+<!-- Навигация -->
+<nav>
+    <ul>
+        <li><a href="{% url 'user_book_app:home' %}">Home</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'user_book_app:book_list' %}">Books</a></li>
+        <li><a href="{% url 'user_book_app:author_stats' %}">Author Stats</a></li>
+        <li><a href="{% url 'user_book_app:greeting' %}">Welcome</a></li>
+        <li><a href="{% url 'user_book_app:logout' %}">Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'user_book_app:login' %}">Login</a></li>
+        <li><a href="{% url 'user_book_app:register' %}">Register</a></li>
+        {% endif %}
+
+    </ul>
+</nav>
+
+<hr>
+
+<div>
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

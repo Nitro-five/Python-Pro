@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Welcome to the Book Review Site!</h1>
+{% if user.is_authenticated %}
+<p>Hello, {{ user.username }}!</p>
+<p>Here are some links you can visit:</p>
+<ul>
+    <li><a href="{% url 'user_book_app:book_list' %}">View Books</a></li>
+    <li><a href="{% url 'user_book_app:author_stats' %}">Author Stats</a></li>
+    <li><a href="{% url 'user_book_app:greeting' %}">Your Profile</a></li>
+</ul>
+{% else %}
+<p><a href="{% url 'user_book_app:login' %}">Login</a> or <a href="{% url 'user_book_app:register' %}">Register</a> to access more features.</p>
+{% endif %}
+{% endblock %}
