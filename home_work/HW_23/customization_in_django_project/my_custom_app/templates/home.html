@@ -1,0 +1,9 @@
+
+{% load custom_tags %}
+
+<h1>Welcome to {{ site_name }}</h1>
+<p>Current year: {{ year }}</p>
+
+<p>Reversed string: {{ "Hello"|reverse_string }}</p>
+
+<p>Full name: {% get_full_name "John" "Doe" %}</p>
