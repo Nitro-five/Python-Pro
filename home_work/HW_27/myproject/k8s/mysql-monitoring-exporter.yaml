@@ -1,0 +1,30 @@
+# Определение Deployment для MySQL Exporter
+apiVersion: apps/v1  # Версия API Kubernetes для работы с объектами типа Deployment
+kind: Deployment  # Тип объекта, создаваемого в Kubernetes (Deployment)
+metadata:
+  name: mysql-exporter  # Имя Deployment, которое будет использоваться в Kubernetes
+
+spec:
+  replicas: 1  # Количество реплик, создаваемых для MySQL Exporter. В данном случае, только 1 реплика.
+  selector:
+    matchLabels:
+      app: mysql-exporter  # Селектор, который определяет, какие поды принадлежат этому Deployment
+                           # Поды, помеченные меткой "app=mysql-exporter", будут управляться этим Deployment.
+  template:
+    metadata:
+      labels:
+        app: mysql-exporter  # Метки для подов, создаваемых этим Deployment.
+        # Важно, чтобы метка соответствовала селектору, чтобы поды были правильно связаны с этим Deployment.
+    spec:
+      containers:
+      - name: mysql-exporter  # Имя контейнера, который будет запущен в поде
+        image: percona/percona-monitoring-plugins:latest  # Используемое изображение для MySQL Exporter
+        ports:
+        - containerPort: 9104  # Порт, на котором будет слушать MySQL Exporter для внешнего подключения
+        env:
+        - name: MYSQL_HOST  # Переменная окружения для указания хоста MySQL
+          value: "mysql-db-0.mysql-db"  # Адрес MySQL в Kubernetes (в данном случае это первый под MySQL в StatefulSet)
+        - name: MYSQL_USER  # Переменная окружения для указания имени пользователя для подключения к MySQL
+          value: "myuser"  # Имя пользователя для подключения к MySQL
+        - name: MYSQL_PASSWORD  # Переменная окружения для указания пароля пользователя
+          value: "mypassword"  # Пароль для пользователя MySQL

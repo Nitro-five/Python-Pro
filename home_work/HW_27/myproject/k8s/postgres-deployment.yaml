@@ -1,0 +1,95 @@
+# StatefulSet для развертывания кластера Patroni с PostgreSQL для высокой доступности
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: patroni-db  # Имя StatefulSet
+spec:
+  serviceName: "patroni-db"  # Сервис для доступа к подам кластера Patroni
+  replicas: 3  # Минимум 3 реплики для высокой доступности
+  selector:
+    matchLabels:
+      app: patroni  # Селектор для выбора подов, которые принадлежат этому StatefulSet
+  template:
+    metadata:
+      labels:
+        app: patroni  # Метки для подов этого StatefulSet
+    spec:
+      containers:
+        - name: patroni  # Имя контейнера
+          image: patroni:latest  # Используемый образ контейнера для Patroni
+          ports:
+            - containerPort: 5432  # Порт, на котором работает PostgreSQL
+          env:  # Список переменных окружения для настройки Patroni и PostgreSQL
+            - name: POSTGRES_USER
+              value: "myuser"  # Пользователь для PostgreSQL
+            - name: POSTGRES_PASSWORD
+              value: "mypassword"  # Пароль для пользователя PostgreSQL
+            - name: POSTGRES_DB
+              value: "mydb"  # Имя базы данных PostgreSQL
+            - name: PATRONI_SCOPE
+              value: "postgres"  # Область для развертывания (стандартное значение "postgres")
+            - name: PATRONI_REPLICATION_USER
+              value: "replicator"  # Пользователь для репликации в PostgreSQL
+            - name: PATRONI_REPLICATION_PASSWORD
+              value: "replicatorpassword"  # Пароль для репликации в PostgreSQL
+            - name: PATRONI_K8S_LABELS
+              value: "app=patroni"  # Лейблы для Kubernetes, связывающие компоненты в кластере
+            - name: PATRONI_ZOOKEEPER_HOST
+              value: "zookeeper-service"  # Хост для Zookeeper, где хранится состояние кластера
+          volumeMounts:
+            - name: patroni-data  # Монтирование тома для хранения данных PostgreSQL
+              mountPath: /data  # Точка монтирования внутри контейнера
+  volumeClaimTemplates:
+    - metadata:
+        name: patroni-data  # Имя PersistentVolumeClaim для хранения данных
+      spec:
+        accessModes: ["ReadWriteOnce"]  # Мод доступа (чтение и запись только для одного экземпляра)
+        resources:
+          requests:
+            storage: 10Gi  # Запрос на 10Ги для хранения данных PostgreSQL
+---
+# Сервис для доступа к кластеру Patroni
+apiVersion: v1
+kind: Service
+metadata:
+  name: patroni-db  # Имя сервиса для доступа
+spec:
+  selector:
+    app: patroni  # Селектор для поиска подов, относящихся к этому сервису
+  ports:
+    - port: 5432  # Порт, через который будет доступен сервис
+      targetPort: 5432  # Порт на контейнере, на котором работает PostgreSQL
+  clusterIP: None  # Это headless-сервис, необходимый для StatefulSet, чтобы каждый под имел свой уникальный IP-адрес
+---
+# Деплоймент для Zookeeper, используемый для хранения состояния кластера Patroni
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper  # Имя деплоймента для Zookeeper
+spec:
+  replicas: 1  # Один экземпляр Zookeeper (можно масштабировать, но для простоты используем один)
+  selector:
+    matchLabels:
+      app: zookeeper  # Селектор для выбора подов Zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper  # Лейблы для подов Zookeeper
+    spec:
+      containers:
+        - name: zookeeper  # Имя контейнера
+          image: wurstmeister/zookeeper:3.4.6  # Образ контейнера для Zookeeper
+          ports:
+            - containerPort: 2181  # Порт, на котором работает Zookeeper
+---
+# Сервис для доступа к Zookeeper
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service  # Имя сервиса для доступа к Zookeeper
+spec:
+  selector:
+    app: zookeeper  # Селектор для поиска подов, относящихся к этому сервису
+  ports:
+    - port: 2181  # Порт для доступа к Zookeeper
+      targetPort: 2181  # Порт контейнера, на котором работает Zookeeper

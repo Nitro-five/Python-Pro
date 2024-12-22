@@ -1,0 +1,42 @@
+# Определение Deployment для Django приложения
+apiVersion: apps/v1  # Версия API Kubernetes для работы с объектами типа Deployment
+kind: Deployment  # Тип ресурса, который будет развернут (Deployment)
+metadata:
+  name: django-deployment  # Имя Deployment, которое будет использоваться в Kubernetes
+spec:
+  replicas: 1  # Количество реплик приложения Django. В данном случае создается только 1 реплика
+  selector:
+    matchLabels:
+      app: django  # Селектор для подов, который будет выбирать поды, помеченные меткой app=django
+  template:
+    metadata:
+      labels:
+        app: django  # Метка для подов, которые будут созданы этим Deployment
+    spec:
+      containers:
+        - name: django  # Имя контейнера
+          image: myproject-django:latest  # Docker-образ приложения Django. Используйте свой собственный собранный образ
+          ports:
+            - containerPort: 8000  # Порт внутри контейнера, на котором будет работать ваше приложение Django
+          env:
+            # Переменная окружения для подключения к базе данных PostgreSQL
+            - name: DATABASE_URL
+              value: "postgres://myuser:mypassword@postgres_db:5432/mydb"  # URL подключения к базе данных PostgreSQL
+            # Переменная окружения для подключения к базе данных MySQL
+            - name: MYSQL_URL
+              value: "mysql://myuser:mypassword@mysql_db:3306/mydb"  # URL подключения к базе данных MySQL
+
+---
+# Определение Service для доступа к приложению Django
+apiVersion: v1  # Версия API для объектов типа Service
+kind: Service  # Тип ресурса, создаваемого в Kubernetes (Service)
+metadata:
+  name: django-service  # Имя сервиса, которое будет использоваться для доступа к Django приложению
+spec:
+  selector:
+    app: django  # Селектор для связи с подами, у которых есть метка app=django
+  ports:
+    - protocol: TCP  # Протокол для порта, по которому будет работать сервис (TCP)
+      port: 80  # Порт, на который будет прослушиваться сервис
+      targetPort: 8000  # Порт, на котором работает ваше приложение внутри контейнера (обычно порт 8000 для Django)
+  type: LoadBalancer  # Тип сервиса: LoadBalancer создаст внешний балансировщик нагрузки для доступа к приложению

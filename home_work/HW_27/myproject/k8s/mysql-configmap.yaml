@@ -1,0 +1,22 @@
+# ConfigMap для настройки MySQL в Percona XtraDB Cluster
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config  # Имя ConfigMap, которое будет использоваться для хранения конфигурации MySQL
+data:
+  my.cnf: |
+    [mysqld]  # Это раздел конфигурации для MySQL сервера
+    # Адреса других узлов в кластере Galera (wsrep_cluster_address)
+    wsrep_cluster_address=gcomm://mysql-db-0.mysql-db,mysql-db-1.mysql-db,mysql-db-2.mysql-db
+    # Имя кластера, к которому подсоединяется MySQL
+    wsrep_cluster_name=percona-cluster
+    # Адрес текущего узла в кластере. Он должен быть уникальным для каждого пода
+    wsrep_node_address="mysql-db-0.mysql-db"
+    # Имя текущего узла в кластере
+    wsrep_node_name="mysql-db-0"
+    # Метод синхронизации данных между узлами
+    wsrep_sst_method=xtrabackup-v2
+    # Данные для аутентификации при передаче состояния узла (SST)
+    wsrep_sst_auth=root:rootpassword
+    # Параметр для повторных попыток автокоммита при ошибке
+    wsrep_retry_autocommit=1

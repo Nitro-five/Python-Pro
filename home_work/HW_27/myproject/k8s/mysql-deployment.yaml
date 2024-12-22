@@ -1,0 +1,54 @@
+# StatefulSet для развертывания кластера MySQL с использованием Percona XtraDB Cluster
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-db  # Имя StatefulSet для MySQL
+spec:
+  serviceName: mysql-db  # Имя сервиса, с которым будут взаимодействовать все реплики
+  replicas: 3  # Количество реплик (подов), для высокой доступности и отказоустойчивости
+  selector:
+    matchLabels:
+      app: mysql  # Селектор для выбора подов, которые принадлежат этому StatefulSet
+  template:
+    metadata:
+      labels:
+        app: mysql  # Метки для подов, созданных в рамках этого StatefulSet
+    spec:
+      containers:
+        - name: mysql  # Имя контейнера для MySQL
+          image: percona/percona-xtradb-cluster:8.0  # Образ контейнера для Percona XtraDB Cluster
+          env:  # Переменные окружения для настройки MySQL
+            - name: MYSQL_ROOT_PASSWORD
+              value: "rootpassword"  # Пароль для пользователя root в MySQL
+            - name: MYSQL_DATABASE
+              value: "mydb"  # Имя базы данных, которая будет создана при инициализации
+            - name: MYSQL_USER
+              value: "myuser"  # Имя пользователя MySQL
+            - name: MYSQL_PASSWORD
+              value: "mypassword"  # Пароль пользователя MySQL
+          ports:
+            - containerPort: 3306  # Порт, на котором MySQL будет слушать соединения
+          volumeMounts:  # Монтирование томов для хранения данных MySQL
+            - name: mysql-data  # Имя тома для хранения данных
+              mountPath: /var/lib/mysql  # Путь внутри контейнера, где будут храниться данные MySQL
+  volumeClaimTemplates:  # Шаблон PersistentVolumeClaim для обеспечения постоянного хранилища данных
+    - metadata:
+        name: mysql-data  # Имя PersistentVolumeClaim для тома данных
+      spec:
+        accessModes: ["ReadWriteOnce"]  # Мод доступа к томам: чтение и запись только для одного пода
+        resources:
+          requests:
+            storage: 1Gi  # Требуемый размер хранилища для данных MySQL (1Gi)
+
+---
+# Сервис для доступа к кластеру MySQL
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-db  # Имя сервиса
+spec:
+  selector:
+    app: mysql  # Селектор для подов MySQL, которые будут обслуживаться этим сервисом
+  ports:
+    - port: 3306  # Порт, через который будет доступен сервис
+  clusterIP: None  # Headless сервис для StatefulSet, чтобы каждому поду был назначен уникальный IP-адрес

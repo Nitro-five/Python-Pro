@@ -1,0 +1,54 @@
+services:
+  # Django Service
+  django:
+    image: myproject-django  # Образ Django приложения. Если у вас есть собственный Docker-образ, укажите его здесь.
+    container_name: myproject-django  # Имя контейнера для вашего Django приложения.
+    command: python manage.py runserver 0.0.0.0:8000  # Команда для запуска сервера Django. Запуск на 0.0.0.0 позволяет слушать на всех интерфейсах.
+    volumes:
+      - .:/app  # Монтируем текущую директорию в контейнер. Это полезно для разработки, чтобы изменения на хосте сразу отображались в контейнере.
+    ports:
+      - "8000:8000"  # Открываем порт 8000 на хосте и связываем его с портом 8000 в контейнере, чтобы иметь доступ к приложению через браузер.
+    environment:
+      - DEBUG=1  # Включаем режим отладки в Django.
+      - DB_POSTGRES_HOST=postgres_db  # Устанавливаем переменную окружения для подключения к PostgreSQL.
+      - DB_MYSQL_HOST=mysql_db  # Устанавливаем переменную окружения для подключения к MySQL.
+    depends_on:
+      - postgres_db  # Указываем, что контейнер Django должен запускаться после контейнера с PostgreSQL.
+      - mysql_db  # Указываем, что контейнер Django должен запускаться после контейнера с MySQL.
+
+  # PostgreSQL Service
+  postgres_db:
+    image: postgres:13  # Используем официальный образ PostgreSQL версии 13.
+    container_name: myproject-postgres-db  # Имя контейнера для базы данных PostgreSQL.
+    environment:
+      POSTGRES_USER: myuser  # Пользователь базы данных PostgreSQL.
+      POSTGRES_PASSWORD: mypassword  # Пароль для пользователя базы данных PostgreSQL.
+      POSTGRES_DB: mydb  # Имя базы данных, которая будет создана в PostgreSQL.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Монтируем volume для данных PostgreSQL, чтобы данные сохранялись при перезапуске контейнера.
+    ports:
+      - "5432:5432"  # Открываем порт 5432 для подключения к PostgreSQL снаружи контейнера.
+
+  # MySQL Service
+  mysql_db:
+    image: mysql:8  # Используем официальный образ MySQL версии 8.
+    container_name: myproject-mysql-db  # Имя контейнера для базы данных MySQL.
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # Пароль для root пользователя в MySQL.
+      MYSQL_DATABASE: mydb  # Имя базы данных, которая будет создана в MySQL.
+      MYSQL_USER: myuser  # Пользователь для подключения к базе данных MySQL.
+      MYSQL_PASSWORD: mypassword  # Пароль для этого пользователя.
+    volumes:
+      - mysql_data:/var/lib/mysql  # Монтируем volume для данных MySQL, чтобы данные сохранялись при перезапуске контейнера.
+    ports:
+      - "3306:3306"  # Открываем порт 3306 для подключения к MySQL снаружи контейнера.
+
+# Сетевые настройки
+networks:
+  default:
+    driver: bridge  # Используем драйвер bridge для сети. Контейнеры могут обмениваться данными между собой внутри этой сети.
+
+# Объемы для постоянного хранения данных
+volumes:
+  postgres_data:  # Volume для хранения данных PostgreSQL.
+  mysql_data:  # Volume для хранения данных MySQL.

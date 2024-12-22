@@ -1,0 +1,49 @@
+# StatefulSet для развертывания MySQL в Kubernetes с использованием Percona XtraDB Cluster
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-db  # Имя StatefulSet, которое используется для управления репликами MySQL
+spec:
+  serviceName: mysql-db  # Имя сервиса, с которым будут взаимодействовать все реплики
+  replicas: 3  # Количество реплик (подов) для обеспечения отказоустойчивости и высокой доступности
+  selector:
+    matchLabels:
+      app: mysql  # Селектор для выбора подов, которые принадлежат этому StatefulSet
+  template:
+    metadata:
+      labels:
+        app: mysql  # Метки для подов, созданных в рамках этого StatefulSet
+    spec:
+      containers:
+      - name: mysql  # Имя контейнера для MySQL
+        image: percona/percona-xtradb-cluster:8.0  # Используемый Docker-образ для Percona XtraDB Cluster (MySQL)
+        env:  # Переменные окружения для настройки MySQL
+          - name: MYSQL_ROOT_PASSWORD
+            value: "rootpassword"  # Пароль для пользователя root
+          - name: MYSQL_DATABASE
+            value: "mydb"  # Имя базы данных, которая будет создана при инициализации MySQL
+          - name: MYSQL_USER
+            value: "myuser"  # Имя пользователя MySQL
+          - name: MYSQL_PASSWORD
+            value: "mypassword"  # Пароль пользователя MySQL
+        ports:
+          - containerPort: 3306  # Порт, на котором MySQL будет слушать соединения
+            name: mysql  # Имя порта
+        volumeMounts:  # Монтируем тома в контейнер
+          - name: mysql-data  # Том для данных MySQL
+            mountPath: /var/lib/mysql  # Путь внутри контейнера для хранения данных MySQL
+          - name: mysql-config  # Том для конфигурации MySQL
+            mountPath: /etc/mysql/conf.d  # Путь внутри контейнера, куда будет монтироваться конфигурационный файл
+            subPath: my.cnf  # Название конфигурационного файла (для отдельного монтирования)
+      volumes:
+        - name: mysql-config  # Определяем том для монтирования конфигурации MySQL
+          configMap:
+            name: mysql-config  # Имя ConfigMap, который содержит конфигурацию MySQL
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data  # Имя PersistentVolumeClaim для хранения данных MySQL
+      spec:
+        accessModes: ["ReadWriteOnce"]  # Тип доступа: только один под может записывать в том
+        resources:
+          requests:
+            storage: 1Gi  # Размер хранилища для данных MySQL (1 гигабайт)
