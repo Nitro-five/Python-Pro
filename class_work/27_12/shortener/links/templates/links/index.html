@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать короткую ссылку{% endblock %}
+
+{% block content %}
+<div class="card mx-auto" style="max-width: 600px;">
+    <div class="card-body">
+        <h1 class="card-title text-center">Сократить ссылку</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100">Сократить</button>
+        </form>
+
+        {% if link %}
+        <div class="alert alert-success mt-4 text-center">
+            <p>Короткая ссылка: <a href="/{{ link.short_url }}" class="text-decoration-none">{{
+                request.build_absolute_uri }}{{ link.short_url }}</a></p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

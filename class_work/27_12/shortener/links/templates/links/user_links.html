@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои ссылки{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Мои ссылки</h1>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Оригинальная ссылка</th>
+            <th>Короткая ссылка</th>
+            <th>Количество кликов</th>
+            <th>Уникальных кликов</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for link in links %}
+        <tr>
+            <td><a href="{{ link.original_url }}" target="_blank">{{ link.original_url }}</a></td>
+            <td><a href="/{{ link.short_url }}" target="_blank">{{ request.build_absolute_uri }}{{ link.short_url }}</a>
+            </td>
+            <td>{{ link.clicks }}</td>
+            <td>{{ link.unique_clicks }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">Вы ещё не создали ссылок.</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<a href="{% url 'index' %}" class="btn btn-primary">Создать новую ссылку</a>
+{% endblock %}
+
+
+{% for link in links %}
+    <div>
+        <p>{{ link.original_url }}</p>
+        <p>Short URL: <a href="{{ link.short_url }}">{{ link.short_url }}</a></p>
+        <img src="{% url 'generate_qr' link.short_url %}" alt="QR Code">
+    </div>
+{% endfor %}
